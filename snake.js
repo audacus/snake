@@ -7,6 +7,28 @@ var Direction = Object.freeze({
     DOWN: 'down'
 });
 
+// 39 right
+// 37 left
+// 38 up
+// 40 down
+// 87 w
+// 65 a
+// 83 s
+// 68 d
+// 27 esc
+// 13 enter
+// 19 pause
+// 32 space
+var Action = Object.freeze({
+    DIRECTION: [37, 65, 39, 68, 38, 87, 40, 83],
+    LEFT: [37, 65],
+    RIGHT: [39, 68],
+    UP: [38, 87],
+    DOWN: [40, 83],
+    PAUSE: [27, 19],
+    CONTINUE: [13, 32]
+});
+
 var Status = Object.freeze({
     START: 'start',
     PLAYING: 'playing',
@@ -35,15 +57,81 @@ function Snake(options) {
     }
 }
 
-function Engine(options) {    
+function Engine(options) {
+    
+    var snake = options.snake || {};
+    var interval;
+    
+    var getActionFromKey = function(code) {
+        var action = null;
+        for (var act in Action) {
+            if (!!Action[act].indexOf(code)) {
+                action = 
+            }
+        }
+        return action;
+    }
+    
+    var getDirectionFromKey = function(code) {
+        var direction = null;
+        if (!!Action.LEFT.indexOf(code)) {
+            direction = Direction.LEFT;
+        } else if (!!Action.RIGHT.indexOf(code)) {
+            direction = Direction.RIGHT;
+        } else if (!!Action.UP.indexOf(code)) {
+            direction = Direction.UP;
+        } else if (!!Action.DOWN.indexOf(code)) {
+            direction = Direction.DOWN;
+        }
+        return direction;
+    }
+    
+    var renderFrame = function() {
+        console.log('render');
+        console.log(snake);
+    };
+    
+    var startRendering = function() {
+        interval = setInterval(renderFrame, options.interval);
+    };
+    
+    var stopRendering = function() {
+        clearInterval(interval);
+    };
+    
+    var start = function() {
+        console.log('start()');
+        startRendering();
+        game.status = Status.PLAYING;
+    };
+    
+    var pause = function() {
+        console.log('pause()');
+        stopRendering();
+        game.status = Status.PAUSE;
+    };
+    
     window.onkeydown = function (e) {
         var code = e.keyCode ? e.keyCode : e.which;
-        
-        console.log(game.status);
+        var action = getActionFromKey(code);
+        console.log(action);
+        if (action == Action.DIRECTION) {
+            direction = getDirectionFromKey(code);
+            if (direction !== null) {
+                snake.direction = direction;
+            }
+        }
+        console.log(snake.direction);
         switch (game.status) {
             case Status.START:
+                if (direction !== null || !!Action.CONTINUE.indexOf(code)) {
+                    start();
+                }
                 break;
             case Status.PLAYING:
+                if (!!Action.PAUSE.indexOf(code)) {
+                    pause();
+                }
                 break;
             case Status.PAUSE:
                 break;
@@ -52,25 +140,7 @@ function Engine(options) {
         }
         
         console.log(code)
-        // 39 right
-        // 37 left
-        // 38 up
-        // 40 down
-        // 87 w
-        // 65 a
-        // 83 s
-        // 68 d
-        // 27 esc
-        // 13 enter
-        // 19 pause
-        // 32 space
     };
-    
-    this.renderFrame = function() {
-        // console.log('render');
-    };
-    
-    this.interval = setInterval(this.renderFrame, options.interval);
 }
 
 function Dimension(options) {
@@ -88,13 +158,17 @@ function Game(options) {
     this.field = new Field(options.field || {});
     this.interval = options.interval || 500;
     this.bonus = options.bonus || 1;
-    this.engine = new Engine({
-        interval: this.interval
-    });
     this.snake = new Snake({
         startLength: options.startLength || 3,
         startDirection: options.startDirection || Direction.RIGHT
     });
+    
+    this.engine = new Engine({
+        interval: this.interval,
+        snake: this.snake
+    });
 }
 
-var game = new Game({});
+var game = new Game({
+    interval: 3000
+});

@@ -1,4 +1,6 @@
-'use strict';
+(function() {
+    'use strict';
+})();
 
 var Direction = Object.freeze({
     LEFT: 'left',
@@ -45,7 +47,7 @@ function Snake(options) {
     this.direction = options.startDirection;
     this.body = [];
     this.startLength = options.startLength;
-    
+
     this.init = function(field) {
         dimensions = field.dimensions;
         dotsTotal = dimensions.x * dimensions.y;
@@ -54,24 +56,24 @@ function Snake(options) {
         }
         middleX = Math.floor(field.dimensions.x / 2);
         middleY = Math.floor(field.dimensions.y / 2);
-    }
+    };
 }
 
 function Engine(options) {
-    
+
     var snake = options.snake || {};
     var interval;
-    
+
     var getActionFromKey = function(code) {
         var action = null;
         for (var act in Action) {
             if (!!Action[act].indexOf(code)) {
-                action = 
+                // action =
             }
         }
         return action;
-    }
-    
+    };
+
     var getDirectionFromKey = function(code) {
         var direction = null;
         if (!!Action.LEFT.indexOf(code)) {
@@ -84,33 +86,33 @@ function Engine(options) {
             direction = Direction.DOWN;
         }
         return direction;
-    }
-    
+    };
+
     var renderFrame = function() {
         console.log('render');
         console.log(snake);
     };
-    
+
     var startRendering = function() {
         interval = setInterval(renderFrame, options.interval);
     };
-    
+
     var stopRendering = function() {
         clearInterval(interval);
     };
-    
+
     var start = function() {
         console.log('start()');
         startRendering();
         game.status = Status.PLAYING;
     };
-    
+
     var pause = function() {
         console.log('pause()');
         stopRendering();
         game.status = Status.PAUSE;
     };
-    
+
     window.onkeydown = function (e) {
         var code = e.keyCode ? e.keyCode : e.which;
         var action = getActionFromKey(code);
@@ -138,8 +140,8 @@ function Engine(options) {
             case Status.DEAD:
                 break;
         }
-        
-        console.log(code)
+
+        console.log(code);
     };
 }
 
@@ -162,7 +164,7 @@ function Game(options) {
         startLength: options.startLength || 3,
         startDirection: options.startDirection || Direction.RIGHT
     });
-    
+
     this.engine = new Engine({
         interval: this.interval,
         snake: this.snake

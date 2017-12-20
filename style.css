@@ -1,0 +1,11 @@
+#game, #controls, #field, .snake {
+    border: 1px black solid;
+}
+
+.snake {
+    position: absolute;
+}
+
+.head {
+    background-color: red;
+}

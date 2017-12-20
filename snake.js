@@ -97,38 +97,40 @@ function Engine(options = {}) {
         snake.direction = snake.desiredDirection;
         var body = snake.body;
         for (var i = body.length - 1; i >= 0; i--) {
-            var x = body[i].x;
-            var y = body[i].y;
+            var oldX = body[i].x;
+            var oldY = body[i].y;
             if (i > 0) {
                 body[i].x = body[i - 1].x;
                 body[i].y = body[i - 1].y;
             } else {
                 switch (snake.direction) {
                     case Direction.LEFT:
-                        body[i].x = x - 1;
+                        body[i].x = oldX - 1;
                         break;
                     case Direction.RIGHT:
-                        body[i].x = x + 1;
+                        body[i].x = oldX + 1;
                         break;
                     case Direction.UP:
-                        body[i].y = y - 1;
+                        body[i].y = oldY - 1;
                         break;
                     case Direction.DOWN:
-                        body[i].y = y + 1;
+                        body[i].y = oldY + 1;
                         break;
                 }
             }
+            var newX = body[i].x;
+            var newY = body[i].y;
             // render
             var divSnake = document.getElementById('snake-' + i);
-            divSnake.style.left = x * scaling + "px";
-            divSnake.style.top = y * scaling + "px";
-            divSnake.setAttribute('x', x);
-            divSnake.setAttribute('y', y);
-
+            divSnake.style.left = newX * scaling + "px";
+            divSnake.style.top = newY * scaling + "px";
+            divSnake.setAttribute('x', newX);
+            divSnake.setAttribute('y', newY);
         }
     };
 
     var startEngine = function() {
+        doStep();
         interval = setInterval(doStep, options.interval);
     };
 
